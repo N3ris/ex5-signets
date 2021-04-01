@@ -19,30 +19,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function ListeDossiers({utilisateur, etatDossiers}) {
+export default function ListeDossiers({utilisateur, etatDossiers,trierDossiers}) {
   const classes = useStyles();
-  const [affichage, setAffichage] =useState("");
-  const [open, setOpen] = useState(false);
 
-  async function handleChange(idd) {
-    // On fait appel à la méthode supprimer de notre code d'interaction avec Firestore
-    crudDossiers.supprimer(utilisateur.uid, idd).then(
-      () => {
-        const tempDossiers = [...dossiers]; // copier le tableau des dossiers existants
-        const dossiersRestants = tempDossiers.filter((elt) => elt.id!==idd); // filtrer pour garder tous les dossiers sauf celui qu'on a demandé de supprimer
-        setDossiers(dossiersRestants); // Muter l'état pour forcer le réaffichage du composant
-      }).catch(erreur => console.log('Échec de la suppression - Firestore a répondu :', erreur.message));
-  };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
   // État des dossiers (vient du composant Appli)
   const [dossiers, setDossiers] = etatDossiers;
+
+  const [tri, setTri] = trierDossiers;
 
   // Lire les dossiers dans Firestore et forcer le réaffichage du composant
   // Remarquez que ce code est dans un useEffect() car on veut l'exécuter 
@@ -52,10 +37,10 @@ export default function ListeDossiers({utilisateur, etatDossiers}) {
   // forcé par la mutation de l'état des dossiers
   useEffect(
     () => {
-      crudDossiers.lireTout(utilisateur.uid).then(
+      crudDossiers.lireTout(utilisateur.uid,tri).then(
         dossiers => setDossiers(dossiers)
       )
-    }, []
+    }, [tri]
   );
 
   /**
@@ -71,27 +56,24 @@ export default function ListeDossiers({utilisateur, etatDossiers}) {
         setDossiers(dossiersRestants); // Muter l'état pour forcer le réaffichage du composant
       }).catch(erreur => console.log('Échec de la suppression - Firestore a répondu :', erreur.message));
   }
-  
+
+
   return (
     <>
     <div>
       <FormControl className={classes.formControl}>
         <InputLabel id="demo-controlled-open-select-label"> trier l’affichage</InputLabel>
         <Select
-          labelId="demo-controlled-open-select-label"
-          id="demo-controlled-open-select"
-          open={open}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          value={affichage}
-          onChange={handleChange}
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        value={tri}
+        defaultValue={0}
+        onChange={(e) => setTri(e.target.value)}
         >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          <MenuItem value={0}>Date de modification descendante</MenuItem>
+          <MenuItem value={1}>Nom de dossier ascendant</MenuItem>
+          <MenuItem value={2}>Nom de dossier descendant</MenuItem>
+
         </Select>
       </FormControl>
     </div>

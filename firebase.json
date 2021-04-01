@@ -4,6 +4,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "site" : "exercice-5",
     "public": "build",
     "ignore": [
       "firebase.json",

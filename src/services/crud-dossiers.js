@@ -18,13 +18,29 @@ export async function creer(uid, dossier) {
 /**
  * Obtenir tous les dossiers de l'utilisateur connecté
  * @param {String} uid identifiant d'utilisateur Firebase
+ * @param {String} Tri
  * @returns {Promise<any[]>} Promesse avec le tableau des documents de dossiers
  */
-export async function lireTout(uid) {
+export async function lireTout(uid,Tri) {
   const dossiers = [];
+
+  const Possibles = [
+    {
+      propriete: "datemodif",
+      ordre: "desc",
+    },
+    {
+      propriete: "nom",
+      ordre: "asc",
+    },
+    {
+      propriete: "nom",
+      ordre: "desc",
+    },
+  ];
   /************************************************************** Exercice #5 : question A **************************/
   // Modifier très légèrement la ligne suivante
-  const reponse = await firestore.collection(utilRef).doc(uid).collection(dossRef).orderBy('datemodif', "desc").get();
+  const reponse = await firestore.collection(utilRef).doc(uid).collection(dossRef).orderBy(Possibles[Tri].propriete, Possibles[Tri].ordre).get();
   reponse.forEach(
     doc => {
       dossiers.push({id: doc.id, ...doc.data()})
@@ -32,6 +48,8 @@ export async function lireTout(uid) {
   );
   return dossiers;
 }
+
+
 
 /**
  * Supprimer un dossier pour l'utilisateur connecté

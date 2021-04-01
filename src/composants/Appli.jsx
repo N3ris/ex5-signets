@@ -13,6 +13,8 @@ export default function Appli() {
   // État de l'utilisateur (pas connecté = null / connecté = objet FB-Auth spécial)
   const [utilisateur, setUtilisateur] = useState(null);
 
+  const trierDossiers = useState(0);
+
   // État des dossiers (initial = tableau vide / rempli = tableau contenant les objets récupérés dans Firestore)
   const etatDossiers = useState([]);
   const [dossiers, setDossiers] = etatDossiers;
@@ -57,7 +59,7 @@ export default function Appli() {
           <>
             <Entete utilisateur={utilisateur} />
             <section className="contenu-principal">
-              <ListeDossiers utilisateur={utilisateur} etatDossiers={etatDossiers} />
+              <ListeDossiers utilisateur={utilisateur} etatDossiers={etatDossiers}                 trierDossiers={trierDossiers} />
               <AjouterDossier ouvert={ouvertAD} setOuvert={setOuvertAD} gererAjout={gererAjouter} />
               <Fab onClick={() => setOuvertAD(true)} className="ajoutRessource" color="primary" aria-label="Ajouter dossier">
                 <AddIcon />
